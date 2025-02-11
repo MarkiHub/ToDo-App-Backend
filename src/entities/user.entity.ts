@@ -1,6 +1,7 @@
 import { Group } from 'src/entities/group.entity';
 import { Task } from 'src/entities/task.entity';
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, BeforeInsert } from 'typeorm';
+import { generateUniqueCode } from 'src/utils/generateCode';
 
 @Entity()
 export class User {
@@ -27,4 +28,9 @@ export class User {
 
     @OneToMany(() => Group, group => group.admin)
     adminOn: Group[];
+
+    @BeforeInsert()
+    generateCode() {
+        this.code = generateUniqueCode(this.name);
+    }
 }

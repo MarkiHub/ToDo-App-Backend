@@ -1,5 +1,6 @@
+import { Group } from 'src/groups/group.entity';
 import { User } from 'src/users/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
 export enum Status {
     DONE = 'done',
@@ -38,4 +39,7 @@ export class Task {
 
     @ManyToOne(() => User, user => user.tasksDone)
     doneBy: User;
+
+    @ManyToOne(() => Group, group => group.tasks)
+    group: Group;
 }

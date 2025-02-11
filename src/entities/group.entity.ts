@@ -1,5 +1,5 @@
-import { Task } from 'src/tasks/task.entity';
-import { User } from 'src/users/user.entity';
+import { Task } from 'src/entities/task.entity';
+import { User } from 'src/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
 
 @Entity()

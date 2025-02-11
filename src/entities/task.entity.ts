@@ -1,5 +1,5 @@
-import { Group } from 'src/groups/group.entity';
-import { User } from 'src/users/user.entity';
+import { Group } from 'src/entities/group.entity';
+import { User } from 'src/entities/user.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, OneToMany } from 'typeorm';
 
 export enum Status {

@@ -1,5 +1,5 @@
-import { Group } from 'src/groups/group.entity';
-import { Task } from 'src/tasks/task.entity';
+import { Group } from 'src/entities/group.entity';
+import { Task } from 'src/entities/task.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 @Entity()

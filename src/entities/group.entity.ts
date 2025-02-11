@@ -1,6 +1,6 @@
 import { Task } from 'src/entities/task.entity';
 import { User } from 'src/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, ManyToMany, JoinTable, OneToMany, BeforeInsert } from 'typeorm';
 
 @Entity()
 export class Group {
@@ -22,5 +22,4 @@ export class Group {
 
     @OneToMany(() => Task, task => task.group)
     tasks: Task[];
-
 }

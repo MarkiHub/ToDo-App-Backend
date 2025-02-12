@@ -3,6 +3,7 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
+import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -56,6 +57,13 @@ export class TasksController {
         });
     }
 
-    
+    @Patch('/complete/:id')
+    completeTask(@Param("id", ParseIntPipe) id: number, @Body() task: CompleteTaskDTO){
+        return this.taskService.completeTask(id, task).then(task => {
+            return task;
+        }).catch(error => {
+            throw error;
+        });
+    }
 
 }

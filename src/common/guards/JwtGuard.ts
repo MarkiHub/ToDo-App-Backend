@@ -1,7 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable } from "@nestjs/common";
 import { Request } from "express";
 import { Observable } from "rxjs";
-import { JWT_KEY } from "src/utils/config";
+import { JWT_KEY } from "src/configs/jwt.config";
 import { JwtUtil } from "src/utils/jwtUtil";
 
 @Injectable()

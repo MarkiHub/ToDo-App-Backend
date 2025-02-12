@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { JwtService } from "@nestjs/jwt"
 import { Injectable } from "@nestjs/common";
-import { JWT_KEY } from "./config";
+import { JWT_KEY } from "../configs/jwt.config";
 
 @Injectable()
 export class JwtUtil {
@@ -9,18 +9,8 @@ export class JwtUtil {
     constructor(private readonly jwtService: JwtService) {}
 
     signToken(res:Response, name:string) {
-
-        const token = this.jwtService.
-            sign({
-                email: name
-            },
-                {
-                    secret: JWT_KEY,
-                    expiresIn: "1h"
-                }
-            );
-
-        res.cookie("auth_token", token, {
+        const token = this.jwtService.sign({ name: name });
+        return res.cookie("auth_token", token, {
             httpOnly: true,
             secure: false,
             maxAge: 3600000

@@ -1,8 +1,9 @@
 import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
-import { Task } from 'src/entities/task.entity';
+import { Status, Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
+import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -56,6 +57,13 @@ export class TasksController {
         });
     }
 
-    
+    @Patch('/:id/:status')
+    completeTask(@Param("id", ParseIntPipe) id: number,@Param("status") status: Status, @Body() task: CompleteTaskDTO){
+        return this.taskService.completeTask(id, status, task).then(task => {
+            return task;
+        }).catch(error => {
+            throw error;
+        });
+    }
 
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateGroupDTO } from 'src/dtos/groups/create-group.dto';
 import { UpdateGroupDTO } from 'src/dtos/groups/update-group.dto';
@@ -30,7 +30,7 @@ export class GroupsService {
 
     async getGroupById(id: number) {    
         return await this.groupRepository.findOne(
-            {where: {id}}
+            {where: {id}, relations: ['members']},
         );
     }
 
@@ -41,5 +41,20 @@ export class GroupsService {
     async deleteGroup(id: number) {
         await this.groupRepository.delete(id);
     }
- 
+    
+    async addUserToGroup(groupId: number, code: string) {
+        const group = await this.groupRepository.findOne({where: {id: groupId}, relations: ['members']});
+        const user = await this.userRepository.findOne({where: {code:code}});
+
+        if (!group) {
+            throw new HttpException('Group not found',404);
+        }
+
+        if (!user) {
+            throw new HttpException('User not found',404);
+        }
+
+        group.members.push(user);
+        await this.groupRepository.save(group);
+    }
 }

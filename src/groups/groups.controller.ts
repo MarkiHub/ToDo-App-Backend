@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Group } from 'src/entities/group.entity';
 import { CreateGroupDTO } from 'src/dtos/groups/create-group.dto';
@@ -29,7 +29,7 @@ export class GroupsController {
     }
 
     @Get(':id')
-    async getGroupById(id: number) {
+    async getGroupById(@Param('id', ParseIntPipe)id: number) {
         return await this.groupsService.getGroupById(id).then(group => {
             return group;
         }).catch(error => {
@@ -55,5 +55,13 @@ export class GroupsController {
         });
     }
 
-
+    @Patch(':groupId/add-user/:code')
+    @HttpCode(201)
+    async addUserToGroup(@Param("groupId", ParseIntPipe) groupId: number, @Param("code") code: string) {
+        return await this.groupsService.addUserToGroup(groupId, code).then(group => {
+            return group;
+        }).catch(error => {
+            throw error;
+        });
+    }
 }

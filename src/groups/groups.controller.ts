@@ -29,7 +29,7 @@ export class GroupsController {
     }
 
     @Get(':id')
-    async getGroupById(id: number) {
+    async getGroupById(@Param('id', ParseIntPipe)id: number) {
         return await this.groupsService.getGroupById(id).then(group => {
             return group;
         }).catch(error => {

@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Group } from 'src/entities/group.entity';
 import { CreateGroupDTO } from 'src/dtos/groups/create-group.dto';
 import { UpdateGroupDTO } from 'src/dtos/groups/update-group.dto';
+import { GetGroupByIdDTO } from './InputsDTO/get-group-by-id.dto';
 
 @Controller('groups')
 export class GroupsController {
@@ -29,12 +30,14 @@ export class GroupsController {
     }
 
     @Get(':id')
-    async getGroupById(@Param('id', ParseIntPipe)id: number) {
-        return await this.groupsService.getGroupById(id).then(group => {
+    //@UsePipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }))
+    async getGroupById(@Param('id', ParseIntPipe)id: number, @Query() query: GetGroupByIdDTO) {
+        try{
+            const group = await this.groupsService.getGroupById(id, query);
             return group;
-        }).catch(error => {
-            throw error;
-        });
+        }catch(Error){
+            throw new HttpException('Group not found',404);
+        }
     }
 
     @Patch(':id')

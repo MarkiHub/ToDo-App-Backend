@@ -30,7 +30,6 @@ export class GroupsController {
     }
 
     @Get(':id')
-    //@UsePipes(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } }))
     async getGroupById(@Param('id', ParseIntPipe)id: number, @Query() query: GetGroupByIdDTO) {
         try{
             const group = await this.groupsService.getGroupById(id, query);

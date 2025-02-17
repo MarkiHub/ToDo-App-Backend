@@ -33,8 +33,7 @@ export class GroupsService {
         const group = await this.groupRepository.findOne(
             {where: {id}, relations: {members: query.members, tasks: query.tasks}},
         );
-        console.log(group);
-        console.log(query);
+        
         if(!group) {
             throw new HttpException('Group not found',404);
         }

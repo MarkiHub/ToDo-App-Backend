@@ -5,6 +5,7 @@ import { UpdateGroupDTO } from 'src/dtos/groups/update-group.dto';
 import { Group } from 'src/entities/group.entity';
 import { User } from 'src/entities/user.entity';
 import { Repository } from 'typeorm';
+import { GetGroupByIdDTO } from './InputsDTO/get-group-by-id.dto';
 
 @Injectable()
 export class GroupsService {
@@ -28,10 +29,16 @@ export class GroupsService {
         return await this.groupRepository.find();
     }
 
-    async getGroupById(id: number) {    
-        return await this.groupRepository.findOne(
-            {where: {id}, relations: ['members']},
+    async getGroupById(id: number, query: GetGroupByIdDTO): Promise<Group> {    
+        const group = await this.groupRepository.findOne(
+            {where: {id}, relations: {members: query.members, tasks: query.tasks}},
         );
+        
+        if(!group) {
+            throw new HttpException('Group not found',404);
+        }
+
+        return group;
     }
 
     async updateGroup(id: number, groupDto: UpdateGroupDTO) {

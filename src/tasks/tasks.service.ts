@@ -6,7 +6,7 @@ import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
 import { Group } from 'src/entities/group.entity';
 import { Status, Task } from 'src/entities/task.entity';
 import { User } from 'src/entities/user.entity';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 
 @Injectable()
 export class TasksService {
@@ -34,6 +34,16 @@ export class TasksService {
 
     async getTasks(): Promise<Task[]> {
         return await this.taskRepository.find();
+    }
+
+    async getPersonalTasks(id: number): Promise<Task[]> {
+        const userEntity = await this.userRepository.findOneBy({ id });
+
+        if (!userEntity) {
+            throw new HttpException('User not found', 404);
+        }
+
+        return await this.taskRepository.find({where: {author: userEntity, group: IsNull()}});
     }
 
     async getTaskById(id: number) {

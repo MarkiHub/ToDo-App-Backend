@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Status, Task } from 'src/entities/task.entity';
@@ -65,5 +65,15 @@ export class TasksController {
             throw error;
         });
     }
+
+        @Get('/personal/:id')
+        async getPersonalTasks(@Param('id', ParseIntPipe)id: number) {
+            try{
+                const tasks = await this.taskService.getPersonalTasks(id);
+                return tasks;
+            }catch(Error){
+                throw new HttpException('Group not found',404);
+            }
+        }
 
 }

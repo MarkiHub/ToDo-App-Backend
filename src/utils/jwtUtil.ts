@@ -10,11 +10,12 @@ export class JwtUtil {
 
     signToken(res:Response, name:string) {
         const token = this.jwtService.sign({ name: name });
-        return res.cookie("auth_token", token, {
+        res.cookie("auth_token", token, {
             httpOnly: true,
             secure: false,
             maxAge: 3600000
-        })
+        }) ;
+        return token ;
     }
 
     verifyToken(token:any, key:string) {

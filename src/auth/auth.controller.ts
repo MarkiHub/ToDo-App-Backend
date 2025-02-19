@@ -21,8 +21,8 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     const user = await this.authService.findByNameAndPassword(loginDto) ;
     if(user) {
-      this.jwtUtil.signToken(res, user.name) ;
-      return res.json({ message: "Login exitoso", user });
+      const token = this.jwtUtil.signToken(res, user.name) ;
+      return res.json({auth_token: token});
     }
     return res.status(401).json({ message: "There's something wrong with your data" });
   }

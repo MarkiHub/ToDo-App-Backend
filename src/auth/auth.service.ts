@@ -15,8 +15,6 @@ export class AuthService {
   ) {}
 
   async registerUser(createUserDto: CreateUserDTO) {
-    //return this.usersService.createUser(createUserDto);
-
     const findedUser = await this.usersRepository.findOneBy({ name: createUserDto.name }) ;
 
     if(findedUser) {

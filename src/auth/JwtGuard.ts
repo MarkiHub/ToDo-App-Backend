@@ -41,7 +41,7 @@ export class JwtGuard implements CanActivate {
                     throw new HttpException("User not found", HttpStatus.UNAUTHORIZED);
                 }
 
-                (req as any).user = tokenData;
+                (req as any).user = user;
                 return true;
             }
             

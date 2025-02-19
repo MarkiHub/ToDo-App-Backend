@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post, Req } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Status, Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
+import { Request } from 'express';
 
 @Controller('tasks')
 export class TasksController {
@@ -13,8 +14,9 @@ export class TasksController {
     ){}
 
     @Post()
-    createTask(@Body() newTask: CreateTaskDTO): Promise<Task> {
-        return this.taskService.createTask(newTask).then(task => {
+    createTask(@Body() newTask: CreateTaskDTO, @Req() req: Request): Promise<Task> {
+        const user = (req as any).user ;
+        return this.taskService.createTask(newTask, user).then(task => {
             return task;
         }).catch(error => {
             throw error; 

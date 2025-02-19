@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, ParseIntPipe, Patch, Post, Query, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpException, Param, ParseIntPipe, Patch, Post, Query, Req, UsePipes, ValidationPipe } from '@nestjs/common';
 import { GroupsService } from './groups.service';
 import { Group } from 'src/entities/group.entity';
 import { CreateGroupDTO } from 'src/dtos/groups/create-group.dto';
 import { UpdateGroupDTO } from 'src/dtos/groups/update-group.dto';
 import { GetGroupByIdDTO } from './InputsDTO/get-group-by-id.dto';
+import { Request } from 'express';
 
 @Controller('groups')
 export class GroupsController {
@@ -13,8 +14,9 @@ export class GroupsController {
     ) {}
 
     @Post()
-    async createGroup(@Body() newGroup: CreateGroupDTO): Promise<Group> {
-        return await this.groupsService.createGroup(newGroup).then(group =>{
+    async createGroup(@Body() newGroup: CreateGroupDTO, @Req() req:Request): Promise<Group> {
+        const user = (req as any).user ;
+        return await this.groupsService.createGroup(newGroup, user).then(group =>{
             return group;
         }).catch(error => {
             throw error;

@@ -18,16 +18,16 @@ export class TasksService {
 
     ){}
 
-    async createTask(taskDto: CreateTaskDTO): Promise<Task> {
-        const userEntity = await this.userRepository.findOneBy({ id: taskDto.authorId });
+    async createTask(taskDto: CreateTaskDTO, user: User): Promise<Task> {
+        // const userEntity = await this.userRepository.findOneBy({ id: taskDto.authorId });
     
-        if (!userEntity) {
-            throw new Error('User not found');
-        }
+        // if (!userEntity) {
+        //     throw new Error('User not found');
+        // }
     
         const groupEntity = taskDto.groupId ? await this.groupRepository.findOneBy({ id: taskDto.groupId }) : null;
     
-        const task = this.taskRepository.create({...taskDto, author: userEntity, group: groupEntity || undefined, });
+        const task = this.taskRepository.create({...taskDto, author: user, group: groupEntity || undefined, });
     
         return await this.taskRepository.save(task);
     }

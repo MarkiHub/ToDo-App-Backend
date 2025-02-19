@@ -14,14 +14,14 @@ export class GroupsService {
         @InjectRepository(User) private userRepository: Repository<User>,
     ) {}
 
-    async createGroup(groupDto: CreateGroupDTO): Promise<Group> {
-        const userEntity = await this.userRepository.findOneBy({id: groupDto.adminId});
+    async createGroup(groupDto: CreateGroupDTO, user:User): Promise<Group> {
+        // const userEntity = await this.userRepository.findOneBy({id: groupDto.adminId});
 
-        if (!userEntity) {
-            throw new Error('User not found');
-        }
-
-        const group = this.groupRepository.create({...groupDto, admin: userEntity});
+        // if (!userEntity) {
+        //     throw new Error('User not found');
+        // }
+        
+        const group = this.groupRepository.create({...groupDto, admin: user});
         return await this.groupRepository.save(group);
     }
 

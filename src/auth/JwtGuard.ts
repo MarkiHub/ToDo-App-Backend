@@ -35,7 +35,7 @@ export class JwtGuard implements CanActivate {
             const isValid = this.jwtUtil.verifyToken(token, JWT_KEY);
             if(isValid) {
                 const tokenData = this.jwtUtil.getTokenData(token, JWT_KEY);
-                const user = await this.userRepository.findOne({ where: { id: tokenData.id }});
+                const user = await this.userRepository.findOne({ where: { name: tokenData.name }});
                 
                 if (!user) {
                     throw new HttpException("User not found", HttpStatus.UNAUTHORIZED);

@@ -4,6 +4,7 @@ import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Status, Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
+import { FilterDTO } from 'src/dtos/tasks/filter-dto';
 
 @Controller('tasks')
 export class TasksController {
@@ -73,6 +74,17 @@ export class TasksController {
                 return tasks;
             }catch(Error){
                 throw new HttpException('Group not found',404);
+            }
+        }
+
+
+        @Post("/filter")
+        async filterTasks(@Body() filter: FilterDTO){
+            try{
+                const tasks = await this.taskService.filterTasks(filter);
+                return tasks;
+            }catch(Error){
+                throw new HttpException('An error occurred',500);
             }
         }
 

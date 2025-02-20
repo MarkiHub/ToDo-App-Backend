@@ -1,9 +1,10 @@
-import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post, Req } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Status, Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
+import { Request } from 'express';
 import { FilterDTO } from 'src/dtos/tasks/filter-dto';
 
 @Controller('tasks')
@@ -14,8 +15,9 @@ export class TasksController {
     ){}
 
     @Post()
-    createTask(@Body() newTask: CreateTaskDTO): Promise<Task> {
-        return this.taskService.createTask(newTask).then(task => {
+    createTask(@Body() newTask: CreateTaskDTO, @Req() req: Request): Promise<Task> {
+        const user = (req as any).user ;
+        return this.taskService.createTask(newTask, user).then(task => {
             return task;
         }).catch(error => {
             throw error; 
@@ -29,6 +31,17 @@ export class TasksController {
         }).catch(error => {
             throw error;
         });
+    }
+
+    @Get('/personal')
+    async getPersonalTasks(@Req() req: Request) {
+        const user = (req as any).user ;
+        try {
+            const tasks = await this.taskService.getPersonalTasks(user);
+            return tasks;
+        } catch (Error) {
+            throw new HttpException('Group not found', 404);
+        }
     }
 
     @Get(':id')
@@ -67,17 +80,6 @@ export class TasksController {
         });
     }
 
-        @Get('/personal/:id')
-        async getPersonalTasks(@Param('id', ParseIntPipe)id: number) {
-            try{
-                const tasks = await this.taskService.getPersonalTasks(id);
-                return tasks;
-            }catch(Error){
-                throw new HttpException('Group not found',404);
-            }
-        }
-
-
         @Post("/filter")
         async filterTasks(@Body() filter: FilterDTO){
             try{
@@ -87,5 +89,4 @@ export class TasksController {
                 throw new HttpException('An error occurred',500);
             }
         }
-
 }

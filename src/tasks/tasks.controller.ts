@@ -32,6 +32,17 @@ export class TasksController {
         });
     }
 
+    @Get('/personal')
+    async getPersonalTasks(@Req() req: Request) {
+        const user = (req as any).user ;
+        try {
+            const tasks = await this.taskService.getPersonalTasks(user);
+            return tasks;
+        } catch (Error) {
+            throw new HttpException('Group not found', 404);
+        }
+    }
+
     @Get(':id')
     getTaskById(id: number){
         return this.taskService.getTaskById(id).then(task => {
@@ -67,15 +78,4 @@ export class TasksController {
             throw error;
         });
     }
-
-        @Get('/personal/:id')
-        async getPersonalTasks(@Param('id', ParseIntPipe)id: number) {
-            try{
-                const tasks = await this.taskService.getPersonalTasks(id);
-                return tasks;
-            }catch(Error){
-                throw new HttpException('Group not found',404);
-            }
-        }
-
 }

@@ -15,18 +15,12 @@ export class GroupsService {
     ) {}
 
     async createGroup(groupDto: CreateGroupDTO, user:User): Promise<Group> {
-        // const userEntity = await this.userRepository.findOneBy({id: groupDto.adminId});
-
-        // if (!userEntity) {
-        //     throw new Error('User not found');
-        // }
-        
         const group = this.groupRepository.create({...groupDto, admin: user});
         return await this.groupRepository.save(group);
     }
 
-    async getGroups(): Promise<Group[]> {
-        return await this.groupRepository.find();
+    async getGroups(user: User): Promise<Group[]> {
+        return await this.groupRepository.findBy(user) ;
     }
 
     async getGroupById(id: number, query: GetGroupByIdDTO): Promise<Group> {    

@@ -23,8 +23,9 @@ export class GroupsController {
     } );}
 
     @Get()
-    async getGroups(): Promise<Group[]> {
-        return await this.groupsService.getGroups().then(groups => {
+    async getGroups(@Req() req:Request): Promise<Group[]> {
+        const user = (req as any).user ;
+        return await this.groupsService.getGroups(user).then(groups => {
             return groups;
         }).catch(error => {
             throw error;

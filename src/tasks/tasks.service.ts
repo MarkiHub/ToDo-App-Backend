@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
@@ -17,13 +17,13 @@ export class TasksService {
     @InjectRepository(Group) private groupRepository: Repository<Group>,
   ) {}
 
-  async createTask(taskDto: CreateTaskDTO): Promise<Task> {
-    const userEntity = await this.userRepository.findOneBy({
-      id: taskDto.authorId,
-    });
-
-    if (!userEntity) {
-      throw new Error('User not found');
+    async createTask(taskDto: CreateTaskDTO, user: User): Promise<Task> {
+    
+        const groupEntity = await this.groupRepository.findOneBy({ id: taskDto.groupId }) ;
+    
+        const task = this.taskRepository.create({...taskDto, author: user, group: groupEntity || undefined, });
+    
+        return await this.taskRepository.save(task);
     }
 
     const groupEntity = taskDto.groupId
@@ -41,18 +41,6 @@ export class TasksService {
 
   async getTasks(): Promise<Task[]> {
     return await this.taskRepository.find();
-  }
-
-  async getPersonalTasks(id: number): Promise<Task[]> {
-    const userEntity = await this.userRepository.findOneBy({ id });
-
-    if (!userEntity) {
-      throw new HttpException('User not found', 404);
-    }
-
-    return await this.taskRepository.find({
-      where: { author: userEntity, group: IsNull() },
-    });
   }
 
   async getTaskById(id: number) {
@@ -74,6 +62,8 @@ export class TasksService {
 
     if (!doneBy) {
       throw new HttpException('User not found', 404);
+    async getPersonalTasks(user:User): Promise<Task[]> {
+        return await this.taskRepository.findBy({author: user, group: IsNull()});
     }
 
     const results = await this.taskRepository.update(id, {
@@ -136,4 +126,12 @@ export class TasksService {
     console.log(query.getSql());
     return await query.getMany();
   }
+    async getGroupTasks(id:number) {
+        const group = await this.groupRepository.findOneBy({id: id}) ;
+
+        if(!group)
+            throw new NotFoundException("There's no group with that id") ;
+            
+        return await this.taskRepository.findBy(group) ;
+    }
 }

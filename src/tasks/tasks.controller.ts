@@ -4,6 +4,7 @@ import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
 import { Status, Task } from 'src/entities/task.entity';
 import { UpdateTaskDTO } from 'src/dtos/tasks/update-task.dto';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
+import { FilterDTO } from 'src/dtos/tasks/filter-dto';
 import { Request } from 'express';
 
 @Controller('tasks')
@@ -78,4 +79,15 @@ export class TasksController {
             throw error;
         });
     }
+
+
+        @Post("/filter")
+        async filterTasks(@Body() filter: FilterDTO){
+            try{
+                const tasks = await this.taskService.filterTasks(filter);
+                return tasks;
+            }catch(Error){
+                throw new HttpException('An error occurred',500);
+            }
+        }
 }

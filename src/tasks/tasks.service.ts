@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CompleteTaskDTO } from 'src/dtos/tasks/complete-task.dto';
 import { CreateTaskDTO } from 'src/dtos/tasks/create-task.dto';
@@ -16,15 +16,8 @@ export class TasksService {
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Group) private groupRepository: Repository<Group>,
   ) {}
-
-  async createTask(taskDto: CreateTaskDTO): Promise<Task> {
-    const userEntity = await this.userRepository.findOneBy({
-      id: taskDto.authorId,
-    });
-
-    if (!userEntity) {
-      throw new Error('User not found');
-    }
+  
+   async createTask(taskDto: CreateTaskDTO, user: User): Promise<Task> {
 
     const groupEntity = taskDto.groupId
       ? await this.groupRepository.findOneBy({ id: taskDto.groupId })
@@ -32,7 +25,7 @@ export class TasksService {
 
     const task = this.taskRepository.create({
       ...taskDto,
-      author: userEntity,
+      author: user,
       group: groupEntity || undefined,
     });
 
@@ -49,6 +42,9 @@ export class TasksService {
     if (!userEntity) {
       throw new HttpException('User not found', 404);
     }
+
+    async getPersonalTasks(user:User): Promise<Task[]> {
+        return await this.taskRepository.findBy({author: user, group: IsNull()});
 
     return await this.taskRepository.find({
       where: { author: userEntity, group: IsNull() },
@@ -132,8 +128,16 @@ export class TasksService {
     if (filter.title) {
     query.andWhere('task.title LIKE :title', { title: `%${filter.title}%` });
     }
-
     console.log(query.getSql());
     return await query.getMany();
   }
+
+async getGroupTasks(id:number) {
+        const group = await this.groupRepository.findOneBy({id: id}) ;
+
+        if(!group)
+            throw new NotFoundException("There's no group with that id") ;
+            
+        return await this.taskRepository.findBy(group) ;
+    }
 }

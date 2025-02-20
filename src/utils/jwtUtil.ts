@@ -11,7 +11,9 @@ export class JwtUtil {
     signToken(res:Response, name:string) {
         const token = this.jwtService.sign({ name: name });
         res.cookie("auth_token", token, {
-            httpOnly: true,
+            // Httponly debe ser false si quieres que js
+            //pueda leer las cookies
+            httpOnly: false,
             secure: false,
             maxAge: 3600000
         }) ;

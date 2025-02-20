@@ -30,7 +30,6 @@ export class JwtGuard implements CanActivate {
         if(!token) {
             throw new HttpException("Login required", HttpStatus.UNAUTHORIZED);
         }
-        
         try {
             const isValid = this.jwtUtil.verifyToken(token, JWT_KEY);
             if(isValid) {

@@ -72,8 +72,9 @@ export class TasksController {
     }
 
     @Patch('/:id/:status')
-    completeTask(@Param("id", ParseIntPipe) id: number,@Param("status") status: Status, @Body() task: CompleteTaskDTO){
-        return this.taskService.completeTask(id, status, task).then(task => {
+    completeTask(@Req() req: Request, @Param("id", ParseIntPipe) id: number,@Param("status") status: Status){
+        const user = (req as any).user ;
+        return this.taskService.completeTask(id, status, user.id).then(task => {
             return task;
         }).catch(error => {
             throw error;

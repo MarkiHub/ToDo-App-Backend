@@ -53,9 +53,9 @@ export class TasksService {
         return await this.taskRepository.delete(id);
     }
 
-    async completeTask(id: number, status: Status, taskDto: CompleteTaskDTO) {
+    async completeTask(id: number, status: Status, doneById: number) {
         const doneBy = await this.userRepository.findOneBy({
-            id: taskDto.doneById,
+            id: doneById,
         });
 
         if (!doneBy) {

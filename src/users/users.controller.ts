@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, Patch, Post, Req } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Patch, Post, Req, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from 'src/dtos/users/create-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -47,7 +47,7 @@ export class UsersController {
         }).catch(error => { throw error; });
     }
 
-    @Get('/me')
+    @Get('/profile/me')
     async getUserInfo(@Req() req: Request) {
         const user = (req as any).user; 
         try {

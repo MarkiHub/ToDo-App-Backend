@@ -27,7 +27,7 @@ export class GroupsService {
 
     async getGroupById(id: number, query: GetGroupByIdDTO): Promise<Group> {    
         const group = await this.groupRepository.findOne(
-            {where: {id}, relations: {members: query.members, tasks: query.tasks}},
+            {where: {id}, relations: {members: query.members, tasks: query.tasks, admin: true}},
         );
         
         if(!group) {

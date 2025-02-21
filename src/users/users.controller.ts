@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, Patch, Post, Req, Request } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Param, ParseIntPipe, Patch, Post, Req, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from 'src/dtos/users/create-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -27,21 +27,21 @@ export class UsersController {
     } 
 
     @Get(':id')
-    async getUserById(id: number) {
+    async getUserById(@Param("id", ParseIntPipe) id: number) {
         return await this.userService.getUserById(id).then(user => {
             return user;
         }).catch(error => { throw error; });
     }
 
     @Patch(':id')
-    async updateUser(id: number, @Body() user: UpdateUserDTO) {
+    async updateUser(@Param("id", ParseIntPipe) id: number, @Body() user: UpdateUserDTO) {
         return await this.userService.updateUser(id, user).then(user => {
             return user;
         }).catch(error => { throw error; });
     }
 
     @Delete(':id')
-    async deleteUser(id: number) {
+    async deleteUser(@Param("id", ParseIntPipe) id: number) {
         return await this.userService.deleteUser(id).then(user => {
             return user;
         }).catch(error => { throw error; });

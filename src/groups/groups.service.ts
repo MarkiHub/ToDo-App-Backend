@@ -15,12 +15,14 @@ export class GroupsService {
     ) {}
 
     async createGroup(groupDto: CreateGroupDTO, user:User): Promise<Group> {
-        const group = this.groupRepository.create({...groupDto, admin: user});
+        const group = this.groupRepository.create({...groupDto, admin: user, members: [user]});
         return await this.groupRepository.save(group);
     }
 
     async getGroups(user: User): Promise<Group[]> {
-        return await this.groupRepository.findBy(user) ;
+        return await this.groupRepository.find({
+            where: { members: { id: user.id } },
+        });
     }
 
     async getGroupById(id: number, query: GetGroupByIdDTO): Promise<Group> {    
@@ -42,7 +44,27 @@ export class GroupsService {
     async deleteGroup(id: number) {
         await this.groupRepository.delete(id);
     }
-    
+
+    async deleteMember(id: number,idMiembro: number) {
+        const group = await this.groupRepository.findOne({where: {id}, relations: ['members', 'admin']});
+
+        if (!group) {
+            throw new HttpException('Group not found',404);
+        }
+
+        const member = await this.userRepository.findOne({where: {id:idMiembro}});
+
+        if (!member) {
+            throw new HttpException('User not found',404);
+        }
+        
+        if(group.admin.id === idMiembro) {
+            throw new HttpException('Admin cannot be deleted',400);
+        }
+
+        group.members = group.members.filter(m => m.id !== idMiembro);
+        await this.groupRepository.save(group);
+    }
     async addUserToGroup(groupId: number, code: string) {
         const group = await this.groupRepository.findOne({where: {id: groupId}, relations: ['members']});
         const user = await this.userRepository.findOne({where: {code:code}});

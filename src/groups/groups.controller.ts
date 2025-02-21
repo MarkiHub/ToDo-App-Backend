@@ -60,6 +60,15 @@ export class GroupsController {
         });
     }
 
+    @Delete(':id/delete-member/:idMiembro')
+    async deleteMember(@Param('id', ParseIntPipe) id: number, @Param('idMiembro', ParseIntPipe) idMiembro: number) {
+        return await this.groupsService.deleteMember(id,idMiembro).then(group => {
+            return group;
+        }).catch(error => {
+            throw error;
+        });
+    }
+
     @Patch(':groupId/add-user/:code')
     @HttpCode(201)
     async addUserToGroup(@Param("groupId", ParseIntPipe) groupId: number, @Param("code") code: string) {

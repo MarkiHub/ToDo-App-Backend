@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, Patch, Post, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from 'src/dtos/users/create-user.dto';
 import { User } from 'src/entities/user.entity';
@@ -45,5 +45,19 @@ export class UsersController {
         return await this.userService.deleteUser(id).then(user => {
             return user;
         }).catch(error => { throw error; });
+    }
+
+    @Get('/me')
+    async getUserInfo(@Req() req: Request) {
+        const user = (req as any).user; 
+        try {
+            if (!user) {
+                throw new HttpException('Unauthorized', 401);
+            }
+            const userInfo = await this.userService.getUserById(user.id);
+            return userInfo;
+        } catch (error) {
+            throw new HttpException('User not found', 404);
+        }
     }
 }

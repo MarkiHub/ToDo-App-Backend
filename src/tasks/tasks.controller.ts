@@ -45,7 +45,7 @@ export class TasksController {
     }
 
     @Get(':id')
-    getTaskById(id: number){
+    getTaskById(@Param("id", ParseIntPipe) id: number){
         return this.taskService.getTaskById(id).then(task => {
             return task;
         }).catch(error => {

@@ -43,7 +43,7 @@ export class GroupsController {
     }
 
     @Patch(':id')
-    async updateGroup(id: number, @Body() group: UpdateGroupDTO) {
+    async updateGroup(@Param("id", ParseIntPipe) id: number, @Body() group: UpdateGroupDTO) {
         return await this.groupsService.updateGroup(id, group).then(group => {
             return group;
         }).catch(error => {
@@ -52,7 +52,7 @@ export class GroupsController {
     }
 
     @Delete(':id')
-    async deleteGroup(id: number) {
+    async deleteGroup(@Param("id", ParseIntPipe) id: number) {
         return await this.groupsService.deleteGroup(id).then(group => {
             return group;
         }).catch(error => {
